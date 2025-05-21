@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com;">
+  <title>Lark/Feishu Chat Exporter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="src/renderer/style.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-primary': '#4A90E2', // A calm blue
+            'brand-secondary': '#50E3C2', // A fresh teal/green
+            'brand-accent': '#F5A623', // A warm orange for accents
+            'glass': 'rgba(255, 255, 255, 0.6)', // For frosted glass effect
+            'glass-dark': 'rgba(0, 0, 0, 0.1)',
+          },
+          boxShadow: {
+            'subtle': '0 4px 12px rgba(0, 0, 0, 0.08)',
+            'medium': '0 8px 24px rgba(0, 0, 0, 0.1)',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gradient-to-br from-slate-100 to-sky-100 text-gray-800 antialiased">
+  <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-3xl min-h-screen flex flex-col">
+    <header class="mb-8 text-center">
+      <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500 py-2">Lark/Feishu Chat Exporter</h1>
+      <p class="text-gray-600 mt-1">Securely export your chat history</p>
+    </header>
+
+    <main class="flex-grow">
+      <!-- Global Loading Indicator -->
+      <div id="global-loader" class="fixed inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-50" style="display: none;">
+        <div class="p-4 bg-white rounded-lg shadow-xl flex items-center space-x-3">
+          <svg class="animate-spin h-6 w-6 text-brand-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span class="text-gray-700 font-medium">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Authentication View -->
+      <div id="auth-view" class="app-card">
+        <h2 class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-3">API Token Configuration</h2>
+        <div id="auth-status" class="p-3 rounded-md mb-4 text-sm transition-all duration-300">
+          Please enter your Lark/Feishu Tenant Access Token.
+        </div>
+        <div class="form-group mb-4">
+          <label for="api-token" class="block text-sm font-medium text-gray-700 mb-1">API Token:</label>
+          <input id="api-token" type="password" placeholder="Paste your Tenant Access Token here" class="app-input">
+        </div>
+        <button id="save-token-button" class="app-button-primary w-full sm:w-auto">Save & Validate Token</button>
+      </div>
+
+      <!-- Chat Selection View -->
+      <div id="chat-selection-view" class="app-card" style="display: none;">
+        <h2 class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-3">Select Chats for Export</h2>
+        <div class="form-group mb-4">
+          <label for="chat-search" class="block text-sm font-medium text-gray-700 mb-1">Search Chats:</label>
+          <input id="chat-search" type="text" placeholder="Search by chat name, description, or ID" class="app-input">
+        </div>
+        <div class="flex justify-between items-center mb-4">
+            <button id="load-chats-button" class="app-button-secondary">Load/Refresh Chats</button>
+            <div>
+                <label for="select-all-chats" class="text-sm text-gray-600 mr-2">Select All Visible:</label>
+                <input type="checkbox" id="select-all-chats" class="rounded text-brand-primary focus:ring-brand-primary h-5 w-5 align-middle">
+            </div>
+        </div>
+        <div id="chats-list-container" class="border border-gray-300 rounded-lg p-1 bg-gray-50/50">
+          <div id="chats-list" class="max-h-72 overflow-y-auto p-3 space-y-2">
+            <p class="text-gray-500 italic text-center py-4">Click "Load Chats" to see available conversations.</p>
+          </div>
+        </div>
+        <p id="selected-chats-count" class="text-sm text-gray-600 mt-3">Selected chats: 0</p>
+      </div>
+
+      <!-- Export Configuration View -->
+      <div id="export-config-view" class="app-card mt-6" style="display: none;">
+        <h2 class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-3">Export Options</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-1"> <!-- Reduced mb -->
+          <div class="form-group">
+            <label for="start-date" class="block text-sm font-medium text-gray-700 mb-1">Start Date (Optional):</label>
+            <input id="start-date" type="date" class="app-input">
+          </div>
+          <div class="form-group">
+            <label for="end-date" class="block text-sm font-medium text-gray-700 mb-1">End Date (Optional):</label>
+            <input id="end-date" type="date" class="app-input">
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mb-4 -mt-0 pl-1"> <!-- Added this paragraph for BUG-004 -->
+          Dates are based on your local timezone. Export includes messages from start of Start Date to end of End Date.
+        </p>
+        <div class="form-group mb-6">
+          <label for="export-format" class="block text-sm font-medium text-gray-700 mb-1">Export Format:</label>
+          <select id="export-format" class="app-input">
+            <option value="html">Formatted HTML (.html)</option>
+            <option value="json">JSON (.json)</option>
+            <option value="csv">CSV (.csv)</option>
+            <option value="txt">Plain Text (.txt)</option>
+          </select>
+        </div>
+        <button id="start-export-button" class="app-button-success w-full" disabled>Start Export</button>
+      </div>
+
+      <!-- Export Progress/Feedback -->
+      <div id="export-progress-view" class="app-card mt-6" style="display: none;">
+        <h2 class="text-2xl font-semibold mb-6 text-gray-700 border-b pb-3">Export Progress</h2>
+        <div id="overall-progress-container" class="mb-4">
+            <div class="flex justify-between mb-1">
+                <span class="text-base font-medium text-brand-primary">Overall Progress (Message Volume Based)</span>
+                <span id="overall-progress-text" class="text-sm font-medium text-brand-primary">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="overall-progress-bar" class="bg-gradient-to-r from-blue-500 to-teal-400 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+        </div>
+        <p id="current-action-status" class="text-gray-600 mb-4 text-center text-sm">Initializing export...</p>
+        <div id="individual-chat-progress-list" class="space-y-3 max-h-80 overflow-y-auto p-3 border border-gray-200 rounded-md bg-slate-50/70">
+          <!-- Individual chat progress will be listed here -->
+        </div>
+        <div id="export-result-summary" class="mt-6 p-4 rounded-md" style="display: none;">
+          <!-- Final success/error summary -->
+        </div>
+        <button id="export-done-button" class="app-button-secondary w-full mt-6" style="display: none;">New Export / Back to Chat Selection</button>
+      </div>
+    </main>
+
+    <footer class="text-center py-6 mt-auto">
+      <p class="text-sm text-gray-500">&copy; 2024 Lark/Feishu Chat Exporter. For demonstration purposes.</p>
+    </footer>
+  </div>
+
+  <script src="./dist/renderer.js"></script>
+</body>
+</html>
+

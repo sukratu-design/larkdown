@@ -1,0 +1,154 @@
+/* Apply a subtle frosted glass effect to cards and base styling not covered by Tailwind utilities or for overrides */
+.app-card {
+  @apply bg-glass shadow-subtle rounded-xl p-6 md:p-8 backdrop-blur-md border border-white/20;
+  /* For browsers not supporting backdrop-filter, a fallback solid color */
+  /* background-color: rgba(255, 255, 255, 0.85); */
+}
+
+/* Custom input styling for a softer look, extending Tailwind */
+.app-input {
+  @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm 
+         focus:ring-2 focus:ring-brand-primary focus:border-transparent 
+         transition duration-150 ease-in-out text-sm placeholder-gray-400;
+  background-color: rgba(255, 255, 255, 0.8); /* Slight transparency for inputs */
+}
+select.app-input {
+    @apply pr-8; /* Ensure space for dropdown arrow */
+}
+
+
+/* Button base styles - can be extended with color specifics by Tailwind classes */
+.app-button {
+  @apply px-6 py-2.5 rounded-lg font-semibold shadow-sm 
+         transition-all duration-200 ease-in-out transform 
+         focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.app-button-primary {
+  @apply app-button bg-gradient-to-r from-blue-500 to-blue-600 text-white 
+         hover:from-blue-600 hover:to-blue-700 hover:shadow-md active:scale-95
+         focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.app-button-secondary {
+  @apply app-button bg-gradient-to-r from-gray-500 to-gray-600 text-white
+         hover:from-gray-600 hover:to-gray-700 hover:shadow-md active:scale-95
+         focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.app-button-success {
+  @apply app-button bg-gradient-to-r from-green-500 to-teal-500 text-white 
+         hover:from-green-600 hover:to-teal-600 hover:shadow-md active:scale-95
+         focus:ring-green-400 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.app-button-danger {
+  @apply app-button bg-gradient-to-r from-red-500 to-pink-500 text-white 
+         hover:from-red-600 hover:to-pink-600 hover:shadow-md active:scale-95
+         focus:ring-red-400;
+}
+
+
+/* Chat list item styling */
+.chat-item {
+  @apply flex items-center p-3 bg-white/70 hover:bg-sky-100/70 rounded-md
+         border border-transparent hover:border-sky-300
+         transition-all duration-150 ease-in-out cursor-pointer;
+}
+
+.chat-item input[type="checkbox"] {
+  @apply rounded text-brand-primary focus:ring-brand-primary mr-3 h-5 w-5 flex-shrink-0;
+}
+
+.chat-item-details {
+  @apply flex-grow overflow-hidden; /* For text truncation if needed */
+}
+.chat-item-name {
+  @apply font-medium text-gray-800 block truncate;
+}
+.chat-item-id {
+  @apply text-xs text-gray-500 block truncate;
+}
+.chat-item-description {
+  @apply text-xs text-gray-500 block mt-0.5 truncate;
+}
+
+
+/* Auth status message styling */
+#auth-status.status-success {
+  @apply bg-green-100 border-l-4 border-green-500 text-green-700;
+}
+#auth-status.status-warning {
+  @apply bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700;
+}
+#auth-status.status-error {
+  @apply bg-red-100 border-l-4 border-red-500 text-red-700;
+}
+
+/* Export result summary styling */
+#export-result-summary.status-success {
+  @apply bg-green-50 border border-green-200 text-green-700;
+}
+#export-result-summary.status-error {
+  @apply bg-red-50 border border-red-200 text-red-700;
+}
+
+/* Individual chat progress item */
+.progress-item-container {
+    @apply p-3 rounded-md border bg-white/80; /* Added slight background for better visibility */
+}
+.progress-item-header {
+    @apply flex justify-between items-center mb-1;
+}
+.progress-item-name {
+    @apply font-medium text-sm text-gray-700 truncate max-w-[200px] sm:max-w-xs md:max-w-sm lg:max-w-md; /* Increased max-width */
+}
+.progress-item-status-badge {
+    @apply px-2 py-0.5 text-xs font-semibold rounded-full leading-none; /* Ensure badge text fits */
+}
+.progress-item-status-badge.pending { @apply bg-gray-200 text-gray-700; }
+.progress-item-status-badge.in-progress { @apply bg-blue-100 text-blue-700; }
+.progress-item-status-badge.processing { @apply bg-yellow-100 text-yellow-700; }
+.progress-item-status-badge.completed { @apply bg-green-100 text-green-700; }
+.progress-item-status-badge.failed { @apply bg-red-100 text-red-700; }
+.progress-item-status-badge.cancelled { @apply bg-orange-100 text-orange-700; }
+
+.progress-item-message {
+    @apply text-xs text-gray-500 mt-1 break-all; /* Allow long paths/messages to wrap */
+}
+.progress-item-message a {
+    @apply text-brand-primary hover:underline;
+}
+
+/* Progress bar specific to individual chat item */
+.progress-chat-bar {
+    @apply h-1.5 rounded-full transition-all duration-300;
+}
+
+
+/* Scrollbar styling for chat list and progress list (Webkit browsers) */
+#chats-list::-webkit-scrollbar,
+#individual-chat-progress-list::-webkit-scrollbar {
+  width: 8px;
+}
+#chats-list::-webkit-scrollbar-track,
+#individual-chat-progress-list::-webkit-scrollbar-track {
+  @apply bg-slate-100 rounded-full;
+}
+#chats-list::-webkit-scrollbar-thumb,
+#individual-chat-progress-list::-webkit-scrollbar-thumb {
+  @apply bg-slate-400 hover:bg-slate-500 rounded-full; /* Darkened thumb slightly */
+}
+
+/* Ensure body takes full height for footer */
+body, html {
+    min-height: 100vh;
+}
+body {
+    display: flex;
+    flex-direction: column;
+}
+.container {
+    flex-grow: 1;
+}
+

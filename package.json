@@ -1,0 +1,76 @@
+{
+  "name": "lark-feishu-chat-exporter",
+  "version": "1.0.0",
+  "description": "Desktop application to export chat history from Lark/Feishu",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "tsc",
+    "dev": "tsc -w & electron .",
+    "package": "electron-builder",
+    "test": "jest --coverage"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "csv-writer": "^1.6.0",
+    "electron-store": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.10.0",
+    "electron": "^27.1.2",
+    "electron-builder": "^24.6.4",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.3.2"
+  },
+  "build": {
+    "appId": "com.larkfeishu.chatexporter",
+    "productName": "Lark Feishu Chat Exporter",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "index.html",
+      "src/renderer/style.css",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": "dmg",
+      "icon": "build_resources/icon.icns" 
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ],
+      "icon": "build_resources/icon.ico" 
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm"
+      ],
+      "category": "Utility",
+      "icon": "build_resources/icons" 
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build_resources/icon.ico",
+      "uninstallerIcon": "build_resources/icon.ico",
+      "license": "LICENSE.md" 
+    }
+  }
+}

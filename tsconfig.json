@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "es2021",                       /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "module": "commonjs",                     /* Specify what module code is generated. */
+    "lib": ["es2021", "dom"],                 /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+    
+    "outDir": "./dist",                       /* Specify an output folder for all emitted files. */
+    "rootDir": "./src",                       /* Specify the root folder within your source files. */
+    
+    "strict": true,                           /* Enable all strict type-checking options. */
+    "esModuleInterop": true,                  /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "skipLibCheck": true,                     /* Skip type checking all .d.ts files. */
+    "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
+    "resolveJsonModule": true,                /* Enable importing .json files */
+    "isolatedModules": true,                  /* Ensure that each file can be safely transpiled without relying on other imports. */
+    "sourceMap": true,                        /* Create source map files for emitted JavaScript files. */
+    // "noUnusedLocals": true,                /* Report errors for unused local variables. */
+    // "noUnusedParameters": true,            /* Report errors for unused parameters in functions. */
+    // "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
+    "baseUrl": "./",                          /* Base directory to resolve non-relative module names. */
+    "paths": {                                /* Specify paths mapping. */
+      "@common/*": ["src/common/*"],
+      "@main/*": ["src/main/*"],
+      "@renderer/*": ["src/renderer/*"],
+      "@services/*": ["src/services/*"],
+      "@models/*": ["src/models/*"],
+      "@formatters/*": ["src/formatters/*"]
+    },
+    "typeRoots": ["./node_modules/@types", "./src/types"] /* Specify multiple folders that act like './node_modules/@types'. */
+  },
+  "include": [
+    "src/**/*.ts", // All TypeScript files in src
+    "__tests__/**/*.ts" // All TypeScript files in __tests__
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "release",
+    "coverage"
+  ]
+}
+
+
